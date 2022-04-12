@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np  #importing numpy
 
 class mainMatrix:
     def __init__(self, m1, m2):
