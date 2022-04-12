@@ -1,6 +1,5 @@
 #Q.find the factorial of the factorial 
 
-
 def factorial_num(num):
 
     """this factorial_num takes input as the factorial of each 
