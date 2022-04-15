@@ -1,6 +1,6 @@
 import numpy as np  #importing numpy
 
-class mainMatrix:
+class MainMatrix:
     def __init__(self, m1, m2):
         self.m1 = m1
         self.m2 = m2
@@ -23,7 +23,7 @@ class mainMatrix:
         print(" ")
         
 
-class subMatrix(mainMatrix):
+class SubMatrix(MainMatrix):
     def __init__(self, m1, m2):
         super().__init__(m1, m2)
     
@@ -50,14 +50,14 @@ print("Parent class operations using numpy: ")
 
 m1 = np.array([[1, 2], [3,4]])
 m2 = np.array([[5, 6], [7,8]])
-obj = mainMatrix(m1, m2)
+obj = MainMatrix(m1, m2)
 obj.addition()
 obj.substraction()
 obj.multiplication()
 obj.transposes()
 
 print("Child class operations using method overriding:")
-obj1 = subMatrix(m1, m2)
+obj1 = SubMatrix(m1, m2)
 obj1.addition()
 obj1.subtraction()
 obj1.transposes()
