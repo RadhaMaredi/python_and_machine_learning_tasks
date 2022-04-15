@@ -30,6 +30,7 @@ def index():
         mysql.connection.commit()  #it saves the changes in db
         cur.close() #close cursor
         return "<h1>Successfully inserted</h1>"
+
     else:
         return render_template("form.html")
     
