@@ -1,7 +1,9 @@
 from flask import Flask, jsonify
 
+#instance of the class(obj)
 app = Flask(__name__)
 
+#creating a list
 student_details = [{"student_name": "Ram",
             'rollno': "1",
             'class': "10th",
@@ -29,14 +31,26 @@ def index():
 
 @app.route("/student_details", methods = ['GET'])
 def get():
+
+    """using GET method getting the total details 
+    from the student_details and return it"""
+
     return jsonify({'student_details': student_details})
 
 @app.route("/student_details/<int:marks>", methods=['GET'])
 def get_id(marks):
+
+    """using GET method getting the required details 
+    from the student_details and return it"""
+
     return jsonify({'student_details': student_details[marks]})
 
 @app.route("/student_details", methods = ['POST'])
 def create():
+
+    """using POST method create the details 
+    in the student_details and return it"""
+
     detail = {'name': "Rama",
               'rollno': "6",
               'class': "10th",
@@ -46,13 +60,20 @@ def create():
 
 @app.route("/student_details/<int:rollno>", methods=['PUT'])
 def student_detail_update(rollno):
+
+    """using PUT method getting the update the details 
+    in the student_details and return it"""
+
     student_details[rollno]['student_name'] = "RADHA"
     return jsonify({'student_details': student_details[rollno]})
 
 @app.route("/student_details/<int:rollno>", methods=['DELETE'])
 def delete(rollno):
+
+    """using DELETE method getting the delete the details 
+    from the student_details and return it"""
+
     student_details.remove(student_details[rollno])
     return jsonify({'result': True})
-
 
 app.run(debug=True)
