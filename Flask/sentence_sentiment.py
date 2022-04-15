@@ -6,14 +6,15 @@ def score_of_sentiment(line):
     """ it takes user text as an input and returns
     the sentimental analysis and polarity score"""
 
-    obj = SentimentIntensityAnalyzer() #object for SentimentIntensityAnalyzer
+    #object for SentimentIntensityAnalyzer
+    obj = SentimentIntensityAnalyzer()
     
     # Polarity, It can be positive, neagtive or neutral.
     dictionary = obj.polarity_scores(line)
-    print(dictionary)
-
-    sentiment_analysis = "" #declare a empty string to store the emotion
-
+    #declare a empty string to store the emotion
+    sentiment_analysis = "" 
+    
+    #decide the analysis
     if dictionary['compound'] >= 0.05:
         sentiment_analysis = "Positive"
 
