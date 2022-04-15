@@ -14,3 +14,4 @@ def mul(num1, num2):
 def div(num1, num2):
     """take two numbers and returns the division"""
     return num1 / num2
+
