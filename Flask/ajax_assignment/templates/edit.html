@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+   <style>
+       *{  /* * indicates all the elements */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background: lightpink;
+  font-family: 'Open Sans', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+flex-direction: column;
+}
+form{
+    display: flex;
+  justify-content: center;
+  align-items: center;
+flex-direction: column;
+}
+.inputs{
+  
+  border-radius: 16px;
+ 
+  padding: 10px;
+  
+  margin: 0px;
+}
+
+.button{
+  width:80px;
+  height: 30px;
+  border-radius: 10px;
+  background-color: purple;
+  border: 0px;
+  font-weight: bold;
+  color: white;
+
+}
+   </style>
+</head>
+<body  >
+    <form action="/update/{{student.id}}"  method="POST">
+        <h1 style="color: darkred;margin-top: 20px; font-size:30px;margin-bottom: 30px; text-align:center;"> Edit User Details</h1>
+
+        <input type="text" name="fname" required value="{{student.fname}}" class="inputs" placeholder="First Name">
+        </br>
+        <input type="text" name="lname" required value="{{student.lname}}" class="inputs" placeholder="Last Name">
+        </br>
+        <input type="text" name="email" pattern = "^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$"  placeholder="Email" required value="{{student.email}}" class="inputs">
+    </br>
+    <input type="password" name="password" required value="{{student.password}}" class="inputs" placeholder="password">
+        </br>
+    <button type="submit" class="button">Update</button>
+
+</form>
+<p style="color:red">{{error}}</p>
+</body>
+</html>
