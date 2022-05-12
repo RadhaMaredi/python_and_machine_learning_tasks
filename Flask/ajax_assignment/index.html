@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+   
+* {    /* "*" indicates all the elements */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background:pink;
+  font-family: 'Open Sans', sans-serif;
+}
+
+table {
+  background: #71d889;
+  border-radius: 0.25em;
+  border-collapse: collapse;
+  margin: 1em;
+}
+
+th {
+  border-bottom: 1px solid darkred;
+  color: darkmagenta;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 0.5em 1em;
+  text-align: left;
+}
+td {
+  color: black;
+  font-weight: 400;
+  padding: 0.65em 1em;
+}
+.disabled td {
+  color: #b3cfd7;
+}
+
+tbody tr:hover {
+  background: #bce590;
+}
+
+.inputs{
+  
+  border-radius: 16px;
+ 
+  padding: 10px;
+  
+  margin: 0px;
+}
+
+.button{
+  width:80px;
+  height: 30px;
+  border-radius: 10px;
+  background-color:brown;
+  border: 0px;
+  color: white;
+  font-weight: bold;
+
+}
+form{
+  display: flex;
+
+  align-items: center;
+  flex-direction: column;
+}
+.wrapper {
+    transition:height 1s ease-out;
+    height:0;
+    overflow:hidden;
+}
+#box{
+  width:350px;
+  height:400px;
+  padding-top: 2%;
+  background:rgba(222, 140, 138, 0.414);
+  margin:0 auto;
+  margin-top:3%;
+  overflow:hidden;
+}
+    </style>
+  </head>
+
+<body>
+  <div  >
+  <div >
+    <a href="/">
+    <button class='btn btn-primary button' style="margin-top:2%; margin-left: 2%;" >sign out</button>
+  </a>
+    <div >
+      
+      <h1 style="color:darkgreen;font-size:20px; text-align:center;">Add new user</h1><br>
+     <div id="container" style="display: flex; justify-content: center; flex-direction:column; align-items: center;" >
+  
+      <form  action="{{url_for('add_student')}}" id="form" method="POST">
+        
+          <input type="text" class="inputs" name="fname" required placeholder="First Name">
+          <br>
+        
+          <input type="text" class="inputs" name="lname" required placeholder="Last Name">
+       <br>
+    
+          <input type="email" class="inputs" pattern = "^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$"   name="email" required placeholder="Email">
+          <!-- <! on click button will check for the pattern >  -->
+        <br>
+        <input type="password" class="inputs" name="password" required placeholder="password">
+       <br>
+        <button  class="button">
+          Create 
+        </button>
+
+       
+      </form><br>
+      <div method="post" action="/index">
+      <p style="color: red;" >{{msg}}</p>
+    </div>
+  </div>
+</div>
+
+  <br>
+ 
+</div >
+  <div class="col-md-8" >
+    <table  style="width:95%; margin-left:30px;">
+      <thead class="headPart">
+        <tr >
+          <th>ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>password</th>
+          
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="rows">
+       
+      
+       
+      </tbody>
+    </table>
+
+  </div>
+</div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script>
+//let some = document.getElementById("wrapper").style.height = '400px';
+
+function slideUp(el) {
+  var elem = document.getElementById(el);
+  elem.style.transition = "all 2s ease-in-out";
+  elem.style.height = "0px";
+}
+function slideDown(el) {
+  var elem = document.getElementById(el);
+  elem.style.transition = "all 2s ease-in-out";
+  elem.style.height = "250px";
+}
+
+function ajax_get(url, ajax_fetch) {
+    var xmlhttp = new XMLHttpRequest();  //object
+    xmlhttp.onreadystatechange = function() { // called whenever ready state changes function triggers
+      //ready state describes loading state of document whwnever property changes readystatechange event fires
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) { //4 indicates request is finished and resposne is ready ,200 means ok
+        
+            console.log('responseText:' + xmlhttp.responseText);
+            try {
+                var data = JSON.parse(xmlhttp.responseText); //converts the json string to original object
+            } catch(err) {
+                console.log(err.message + " in " + xmlhttp.responseText);
+                return;
+            }
+            ajax_fetch(data);
+        }
+    };
+ 
+    xmlhttp.open("GET", url, true); //open method used to open connection to server
+    xmlhttp.send(); //send will send request object to server
+}
+ 
+ajax_get('/jsono', function(data) {
+   console.log(data)
+  
+   for (let i = 0; i < data.length; i++) {
+     var tb=document.getElementById('rows')
+     var tr=document.createElement('tr')
+     var tdB=document.createElement("td")
+    var a1=document.createElement("a")
+    var a2=document.createElement("a")
+     var tr2=document.createElement("tr")
+     var td1=document.createElement("td")
+     var td2=document.createElement("td")
+     var td3=document.createElement("td")
+     var td4=document.createElement('td')
+     var td5=document.createElement('td')
+     td1.innerHTML=data[i].id
+     td2.innerHTML=data[i].fname
+     td3.innerHTML=data[i].lname
+     td4.innerHTML=data[i].email
+     td5.innerHTML=data[i].password
+     a1.href='/edit/'+data[i].id
+     a1.innerHTML="Edit"
+     a2.innerHTML="Delete"
+     a1.style.marginRight='10px'
+     a1.style.color="purple"
+     a2.style.marginLeft='10px'
+     a2.style.color="red"
+     a2.href='/delete/'+data[i].id //gives the id of the row which we want to delete
+     tdB.append(a1,a2)
+     tr.append(td1,td2,td3,td4,td5,tdB)
+     tb.appendChild(tr) // ro add element
+     
+}
+});
+ 
+</script>
+<html>
