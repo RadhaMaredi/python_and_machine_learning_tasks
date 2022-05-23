@@ -17,11 +17,9 @@ print(classes)
 #read the image and resize the image
 my_img = cv2.imread('/home/neosoft/Desktop/1.jpg')
 my_img = cv2.cvtColor(my_img, cv2.COLOR_BGR2RGB)
-plt.imshow(my_img)
-
-my_img = cv2.imread('/home/neosoft/Desktop/1.jpg')
 my_img = cv2.resize(my_img,(1280,720))
 my_img.shape      #height,width, no.of channels
+plt.imshow(my_img)
 
 ht, wt, _ = my_img.shape
 
@@ -41,9 +39,7 @@ net.setInput(blob)
     
 last_layer = net.getUnconnectedOutLayersNames()
 layer_out = net.forward(last_layer)
-layer_out
-layer_out[0].shape
-layer_out[0][0]
+print(layer_out)
 
 boxes =[]
 confidences = []
@@ -56,7 +52,6 @@ for output in layer_out:
         confidence = score[class_id]
         
         if confidence > 0.6:
-            
             center_x = int(detection[0] * wt)
             center_y = int(detection[1] * ht)
             w = int(detection[2] * wt)
@@ -69,7 +64,6 @@ for output in layer_out:
             
 #Performs non maximum suppression(nms) given boxes and corresponding scores.
 indexes = cv2.dnn.NMSBoxes(boxes, confidences,.5,.4)  
-
 font = cv2.FONT_HERSHEY_PLAIN #font style
 colors = np.random.uniform(0,255,size = (len(boxes),3))
 
@@ -104,5 +98,3 @@ print("improper mask: "+str(k))
 cv2.imshow('img',my_img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
-
