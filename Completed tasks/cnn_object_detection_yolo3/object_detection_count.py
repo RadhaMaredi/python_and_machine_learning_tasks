@@ -39,7 +39,6 @@ net.setInput(blob)
 
 #getUnconnectedOutLayers(): Get the index of the output layers.
     
- 
 last_layer = net.getUnconnectedOutLayersNames()
 layer_out = net.forward(last_layer)
 layer_out
@@ -70,7 +69,6 @@ for output in layer_out:
             
 #Performs non maximum suppression(nms) given boxes and corresponding scores.
 indexes = cv2.dnn.NMSBoxes(boxes, confidences,.5,.4)  
-indexes
 
 font = cv2.FONT_HERSHEY_PLAIN #font style
 colors = np.random.uniform(0,255,size = (len(boxes),3))
