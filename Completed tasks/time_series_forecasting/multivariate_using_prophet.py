@@ -7,14 +7,11 @@ from fbprophet import Prophet
 
 #read the train dataset
 df_train = pd.read_csv('/home/neosoft/Downloads/archive (6)/Google_Stock_Price_Train.csv')
-df_train
 
 #convert into datetime formate and remove volume
 df_train['Date'] =pd.to_datetime(df_train['Date'])
 df_train['Close']=df_train['Close'].astype(str).str.replace(",","").astype('float64')
 df_train = df_train.drop(columns='Volume', axis=1)
-df_train.head()
-df_train.tail()
 
 #read the test dataset and convert into datetime formate and remove volume
 df_test = pd.read_csv('/home/neosoft/Downloads/archive (6)/Google_Stock_Price_Test.csv')
