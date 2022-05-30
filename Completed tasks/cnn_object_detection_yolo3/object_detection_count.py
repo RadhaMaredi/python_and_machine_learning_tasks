@@ -26,38 +26,44 @@ ht, wt, _ = my_img.shape
 #it returns an 4d array/blob for input img, (img,scalefactor(1/n),size,mean subtraciton,swapRB)
 # convert the images list into an OpenCV-compatible blob
 blob = cv2.dnn.blobFromImage(my_img, 1/255, (416,416),(0,0,0),swapRB = True, crop = False)  
-blob.shape
 
 #blob object is given given as input to the network
 net.setInput(blob)
 
 #yOLOv3 has 3 output layers (82, 94 and 106) as the figure shows.
-
 #getLayerNames(): Get the name of all layers of the network.
-
 #getUnconnectedOutLayers(): Get the index of the output layers.
-    
 last_layer = net.getUnconnectedOutLayersNames()
 layer_out = net.forward(last_layer)
 print(layer_out)
 
+# Initialize our lists of detected bounding boxes, confidences, and class ids respectively.
 boxes =[]
 confidences = []
 class_ids = []
 
+# iterate over the each layer outputs
 for output in layer_out:
+    #iterate over each of the detections
     for detection in output:
         score = detection[5:]
         class_id = np.argmax(score)
         confidence = score[class_id]
         
+         # Filter out weak predictions by ensuring the detected
+         # probability is greater than the minimum probability
         if confidence > 0.6:
+            # scale the bounding box coordinates back relative to the
             center_x = int(detection[0] * wt)
             center_y = int(detection[1] * ht)
+            
+            # Use the center (x, y)-coordinates to derive the top
+            # and left corner of the bounding box
             w = int(detection[2] * wt)
             h = int(detection[3]* ht)
             x = int(center_x - w/2)
             y = int(center_y - h/2)
+            # Update list of bounding box coordinates, confidences, and class ids
             boxes.append([x,y,w,h])
             confidences.append((float(confidence)))
             class_ids.append(class_id)
@@ -70,9 +76,12 @@ colors = np.random.uniform(0,255,size = (len(boxes),3))
 m=0
 n=0
 k=0
+
+# Ensure at least one detection exists
 if len(indexes) > 0:
+    # iterate over the indexes we are keeping
     for i in indexes.flatten():
-        x,y,w,h = boxes[i]
+        x,y,w,h = boxes[i]  # Extract the bounding box coordinates
         label = str(classes[class_ids[i]])
         confidence = str((int(confidences[i] *100)))
         
