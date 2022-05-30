@@ -1,4 +1,5 @@
 Problem statement:
+
 Detect the person who are wearing mask properly, improperly and no_mask and also find the count of the classes?
 
 Approach:
@@ -14,8 +15,15 @@ Approach:
 
 6.  By using the weights file implemented the detection and count of the classes
 
-output:![Screenshot from 2022-05-11 21-03-52](https://user-images.githubusercontent.com/99475599/170968333-d113b601-6d1e-40c7-838a-40ea06e54906.png)
+output:
+
+![Screenshot from 2022-05-11 21-03-52](https://user-images.githubusercontent.com/99475599/170968333-d113b601-6d1e-40c7-838a-40ea06e54906.png)
+
+
+![Screenshot from 2022-05-30 15-31-35-1](https://user-images.githubusercontent.com/99475599/170969507-31380e74-d1e2-45fc-94e8-6df734a0b8bb.png)
+
 
 ![Screenshot from 2022-05-11 20-59-27](https://user-images.githubusercontent.com/99475599/170968349-fd0a33ca-06e0-4c33-bb91-44a8d864063e.png)
+
 
 ![Screenshot from 2022-05-09 20-22-55](https://user-images.githubusercontent.com/99475599/170968396-454ffe3f-5438-435d-93fe-6c4995a3b1ae.png)
