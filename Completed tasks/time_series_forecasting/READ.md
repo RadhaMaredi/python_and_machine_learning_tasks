@@ -1,11 +1,10 @@
-What is the time series forecasting?
-
+Time series forecasting:
 Time series forecasting occurs when you make scientific predictions based on historical time stamped data. It involves building models through historical analysis and using them to make observations and drive future strategic decision-making.
 
-what is the univariate?
+Univariate time series forecasting:
 Univariate analysis is the analysis of one variable.
 
-what is the multivariate?
+Multivariate time series forecasting:
 Multivariate analysis is the analysis of more than one variable.
 
 Problem statement:
