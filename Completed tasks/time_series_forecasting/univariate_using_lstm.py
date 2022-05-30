@@ -1,131 +1,118 @@
 import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM
-from tensorflow.keras.layers import Dense, Dropout
 import pandas as pd
-from matplotlib import pyplot as plt
-from sklearn.preprocessing import StandardScaler
 import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+%matplotlib inline
+import tensorflow as tf
+from tensorflow import keras
+#from tensorflow.keras import layers
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import LSTM
+from tensorflow.keras.layers import Flatten,Dropout
 
-#from datetime import datetime
-#Read the csv file
-df = pd.read_csv('/home/neosoft/Downloads/GE.csv')
-df.head()
+df1 = pd.read_csv("/home/neosoft/Downloads/archive (6)/Google_Stock_Price_Train.csv")
 
-#Separate dates for future plotting
-train_dates = pd.to_datetime(df['Date'])
-train_dates.tail(15)
+#distribution is not gaussion so used minmaxscaler it returns feature ranges  0 to 1 range
+sc=MinMaxScaler(feature_range=(0,1))
+df1_scaled_train = sc.fit_transform(df1)
 
-#Variables for training
-cols = list(df)[1:6]
-#Date and volume columns are not used in training. 
-cols #['Open', 'High', 'Low', 'Close', 'Adj Close']
+hops = 60 #choose a number of time steps
+total_len = df1_scaled_train.shape[0] #define input sequence
 
-#New dataframe with only training data - 5 columns
-df_for_training = df[cols].astype(float)
-df_for_training
+#preparing independent and dependent features
+x_train=[]
+y_train=[]
+for i in range(60,total_len):
+    #fine end of this pattern
+    #gathering input and output parts of the pattern
+    x_train.append(df1_scaled_train[i-60:i])
+    y_train.append(df1_scaled_train[i])
+x_train=np.array(x_train)
+y_train=np.array(y_train)
 
-#visualize the dataset
-df_for_plot=df_for_training.tail(5000)
-df_for_plot.plot.line()
+print(x_train)
+print(y_train)
+print(len(x_train))
+print(len(y_train))
 
-#LSTM uses sigmoid and tanh that are sensitive to magnitude so values need to be normalized
-# normalize the dataset
-scaler = StandardScaler()
-scaler = scaler.fit(df_for_training)
-df_for_training_scaled = scaler.transform(df_for_training)
+#reshape it to (batche_size(#size of inputs),timesteps,input_dimension)
+x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
 
-#As required for LSTM networks, we require to reshape an input data into n_samples x timesteps x n_features. 
-#In this example, the n_features is 5. We will make timesteps = 14 (past days data used for training). 
-
-#Empty lists to be populated using formatted training data
-trainX = []
-trainY = []
-
-n_future = 1   # Number of days we want to look into the future based on the past days.
-n_past = 14   #Number of past days we want to use to predict the future.
-
-#Reformat input data into a shape: (n_samples x timesteps x n_features)
-#In my example, my df_for_training_scaled has a shape (12823, 5)
-#12823 refers to the number of data points and 5 refers to the columns (multi-variables).
-
-for i in range(n_past, len(df_for_training_scaled) - n_future +1):
-    trainX.append(df_for_training_scaled[i - n_past:i, 0:df_for_training.shape[1]])
-    trainY.append(df_for_training_scaled[i + n_future - 1:i + n_future, 0])
-
-trainX, trainY = np.array(trainX), np.array(trainY)
-
-print('trainX shape == {}.'.format(trainX.shape))
-print('trainY shape == {}.'.format(trainY.shape))
-
-#In my case, trainX has a shape (12809, 14, 5). 
-#12809 because we are looking back 14 days (12823 - 14 = 12809). 
-#Remember that we cannot look back 14 days until we get to the 15th day. 
-#Also, trainY has a shape (12809, 1). Our model only predicts a single value, but 
-#it needs multiple variables (5 in my example) to make this prediction. 
-#This is why we can only predict a single day after our training, the day after where our data ends.
-#To predict more days in future, we need all the 5 variables which we do not have. 
-#We need to predict all variables if we want to do that. 
-
-# define the Autoencoder model
-
+#build the model
 model = Sequential()
-model.add(LSTM(64, activation='relu', input_shape=(trainX.shape[1], trainX.shape[2]), return_sequences=True))
-model.add(LSTM(32, activation='relu', return_sequences=False))
+#addign layer1 LSTM
+#input_shape=(no.of time steps(60),last feature of x_train)
+model.add(LSTM(units=100, return_sequences=True,input_shape=(x_train.shape[1],1)))
 model.add(Dropout(0.2))
-model.add(Dense(trainY.shape[1]))
-model.compile(optimizer='adam', loss='mse')
+#adding layer2 LSTM
+model.add(LSTM(units=100,return_sequences=True))
+model.add(Dropout(0.4))
+#adding layer3 LSTM
+model.add(LSTM(units=100,return_sequences=True))
+model.add(Dropout(0.6))
+#adding layer4 LSTM
+model.add(LSTM(units=100))
+model.add(Dropout(0.4))
+#adding Dense layer
+model.add(Dense(units=1))
+model.compile(optimizer="adam",loss='mean_squared_error')
 model.summary()
 
-# fit the model
-history = model.fit(trainX, trainY, epochs=5, batch_size=16, validation_split=0.1, verbose=1)
+#fitting the RNN  to the traing dataset
+epochs = model.fit(x_train,y_train,epochs=100,batch_size=32,validation_split=0.2)
 
-#plot the train and validation losses
-plt.plot(history.history['loss'], label='Training loss')
-plt.plot(history.history['val_loss'], label='Validation loss')
+#plot the loss graph
+plt.plot(epochs.history['loss'], label='train')
+plt.plot(epochs.history['val_loss'], label='test')
+plt.title('Loss Graph') 
+plt.xlabel('Epochs')  
+plt.ylabel('Loss') 
+plt.legend();
+
+#prepare test data set and try predicting 2017 values for the same.
+df1_test=pd.read_csv('/home/neosoft/Downloads/archive (6)/Google_Stock_Price_Test.csv')
+print(df1_test.shape)
+print(df1_test['Open'].plot())
+
+df1_total = pd.concat([df1['Open'],df1_test['Open']],axis=0)
+#print(df1_total)
+df1_new = df1_total.values
+#print(len(df1_new))
+test_arr = df1_new[len(df1_new)-len(df1_test)-60:]
+#verify if 80 reords are present or not. 20 from test data and last 60 records from train dataset
+#print(len(test_arr))
+print(test_arr)
+
+#convert it into 60 features and 1 out as we did for train data set
+#before that scale it
+test_arr_1 = sc.transform(test_arr.reshape(-1,1))
+
+n_hops = 60
+n_features = 1
+x_test = []
+#dont require y_test this time as we are going to predict the values
+y_test=[]
+for i in range(n_hops, test_arr_1.shape[0]):
+    x_test.append(test_arr_1[i-n_hops:i])
+x_test=np.array(x_test)
+
+#predicting the values
+y_test_pred = model.predict(x_test)
+
+#getting original values by doing the inverse transoform
+y_test_predict_actual = sc.inverse_transform(y_test_pred)
+
+#compare predicted and actual values by creaing a Dataframe
+test_pred_1 = pd.DataFrame(y_test_predict_actual,columns=['Predicted'])
+test_actual_1 = df1_test[['Date','Open']]
+full_test_actual_1=pd.concat([test_pred_1,test_actual_1],axis=1)
+print(full_test_actual_1)
+
+#visualization
+full_test_actual_1.index=pd.to_datetime(full_test_actual_1['Date'])
+plt.plot(full_test_actual_1["Open"],color='red',label='actual')
+plt.plot(full_test_actual_1["Predicted"],color='blue',label='pred')
+plt.plot()
 plt.legend()
-
-#Predicting...
-#Libraries that will help us extract only business days in the US.
-#Otherwise our dates would be wrong when we look back (or forward).
-
-from pandas.tseries.holiday import USFederalHolidayCalendar
-from pandas.tseries.offsets import CustomBusinessDay
-us_bd = CustomBusinessDay(calendar=USFederalHolidayCalendar())
-
-#Remember that we can only predict one day in future as our model needs 5 variables
-#as inputs for prediction. We only have all 5 variables until the last day in our dataset.
-n_past = 16
-n_days_for_prediction=15  #let us predict past 15 days
-
-predict_period_dates = pd.date_range(list(train_dates)[-n_past], periods=n_days_for_prediction, freq=us_bd).tolist()
-predict_period_dates
-
-#Make prediction
-prediction = model.predict(trainX[-n_days_for_prediction:]) #shape = (n, 1) where n is the n_days_for_prediction
-prediction
-
-#Perform inverse transformation to rescale back to original range
-#Since we used 5 variables for transform, the inverse expects same dimensions
-#Therefore, let us copy our values 5 times and discard them after inverse transform
-prediction_copies = np.repeat(prediction, df_for_training.shape[1], axis=-1)
-y_pred_future = scaler.inverse_transform(prediction_copies)[:,0]
-y_pred_future
-
-# Convert timestamp to date
-forecast_dates = []
-for time_i in predict_period_dates:
-    forecast_dates.append(time_i.date())
-
-df_forecast = pd.DataFrame({'Date':np.array(forecast_dates), 'Open':y_pred_future})
-df_forecast['Date']=pd.to_datetime(df_forecast['Date'])
-df_forecast
-
-original = df[['Date', 'Open']]
-original['Date']=pd.to_datetime(original['Date'])
-original = original.loc[original['Date'] >= '2020-5-1']
-original
-
-sns.lineplot(original['Date'], original['Open'])
-sns.lineplot(df_forecast['Date'], df_forecast['Open'])
-    
