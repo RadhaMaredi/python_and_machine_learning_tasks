@@ -5,7 +5,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from fbprophet import Prophet
 
-#read the train dataset
 df_train = pd.read_csv('/home/neosoft/Downloads/archive (6)/Google_Stock_Price_Train.csv')
 
 #convert into datetime formate and remove volume
@@ -18,11 +17,6 @@ df_test = pd.read_csv('/home/neosoft/Downloads/archive (6)/Google_Stock_Price_Te
 df_test['Date'] =pd.to_datetime(df_test['Date'])
 df_test['Close']=df_test['Close'].astype(str).str.replace(",","").astype('float64')
 df_test = df_test.drop(columns='Volume', axis=1)
-df_test.head()
-df_test.tail()
-
-df_train.dtypes
-df_test.dtypes
 
 #plot the graph and try to visualize for all columns based on date
 plt.figure(figsize=(10,8))
@@ -35,11 +29,9 @@ plt.legend()
 
 #change the column names of datetime and target of train dataset
 df_train.rename(columns={'Open':'y', 'Date':'ds'},inplace=True)
-df_train.head()
 
 #change the column names of datetime and target of test dataset
 df_test.rename(columns={'Open':'y', 'Date':'ds'},inplace=True)
-df_test.head()
 
 #built the lstm model
 model = Prophet(interval_width=0.9)
@@ -47,20 +39,16 @@ model.add_regressor('High', standardize=False)
 model.add_regressor('Low', standardize=False)
 model.add_regressor('Close', standardize=False)
 model.fit(df_train)
-model.params
 
 #create a dataframe with required columns
 predict = df_test[['ds','High','Low','Close']]
-predict.head()
 
 #predict the values
 forcast = model.predict(predict)
 forcast = forcast[['ds','yhat']]
-forcast.head()
 
 #concatinate the predicted values and actual values
 final_df = pd.concat((forcast['yhat'],df_test),axis=1)
-final_df.head(10)
 
 #visualie the values of predicted and actual values
 plt.figure(figsize=(8,6))
@@ -71,13 +59,11 @@ plt.legend()
 #cross validation
 from fbprophet.diagnostics import cross_validation
 df_cv=cross_validation(model,horizon="365 days",period='180 days',initial='1095 days')
-df_cv.head()
 
 #perfomance metrix
 from fbprophet.diagnostics import performance_metrics
 df_performance=performance_metrics(df_cv)
-df_performance.head()
 
 #plot the rmse
 from fbprophet.plot import plot_cross_validation_metric
-fig=plot_cross_validation_metric(df_cv,metric='rmse')
+plot_cross_validation_metric(df_cv,metric='rmse')
