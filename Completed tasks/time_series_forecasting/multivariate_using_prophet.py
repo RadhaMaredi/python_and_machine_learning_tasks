@@ -4,6 +4,10 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from fbprophet import Prophet
+from fbprophet.diagnostics import cross_validation
+from fbprophet.diagnostics import performance_metrics
+from fbprophet.plot import plot_cross_validation_metric
+
 
 df_train = pd.read_csv('/home/neosoft/Downloads/archive (6)/Google_Stock_Price_Train.csv')
 
@@ -57,13 +61,10 @@ plt.plot(final_df['ds'],final_df['yhat'],color='blue', label='predicted_values')
 plt.legend()
 
 #cross validation
-from fbprophet.diagnostics import cross_validation
 df_cv=cross_validation(model,horizon="365 days",period='180 days',initial='1095 days')
 
 #perfomance metrix
-from fbprophet.diagnostics import performance_metrics
 df_performance=performance_metrics(df_cv)
 
 #plot the rmse
-from fbprophet.plot import plot_cross_validation_metric
 plot_cross_validation_metric(df_cv,metric='rmse')
