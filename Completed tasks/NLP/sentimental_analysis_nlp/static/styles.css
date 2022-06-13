@@ -1,0 +1,20 @@
+body {
+  text-align: left;
+  background: #57afb3;
+}
+
+#text-box{
+  height:100px;
+  width: 300px;
+}
+
+#submit{
+  background-color: #12e316; /* Green */
+  color: black;
+  text-align: center;
+  font-size: 16px;
+  border:0px solid;
+  border-radius: 5px;
+  height:50px;
+  width:80px;
+}
