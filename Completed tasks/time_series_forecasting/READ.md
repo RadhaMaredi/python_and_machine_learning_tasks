@@ -30,3 +30,7 @@ Approach for LSTM:
 5.  predict the the results
 6.  inverse transform
 7.  visualize the results
+
+Results:
+
+https://docs.google.com/document/d/1tDk41MkYHOPbvtjGa3T1BZM_tPQFn3C9U2jTWIkvnp0/edit?usp=sharing
